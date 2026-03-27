@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZOOment 野生物种 | 万物共生 野趣天成</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-green: #D1F10A;
+            --brand-green-dark: #B8D909;
+            --black: #1A1A1A;
+            --white: #FFFFFF;
+            --bg-light: #FAFAFA;
+            --bg-cream: #F4F1EA;
+            --gray-light: #E5E5E5;
+            --gray: #888888;
+            --accent-peacock: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --accent-strawberry: #E85D75;
+            --accent-sunset: #FF8C42;
+            --shadow-soft: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-hover: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+            background: var(--bg-light);
+            color: var(--black);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Grain Overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.03;
+            z-index: 9999;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        /* Age Verification Modal */
+        .age-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        .age-modal.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .age-content {
+            text-align: center;
+            color: var(--white);
+            max-width: 500px;
+            padding: 40px;
+        }
+
+        .age-logo {
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--brand-green);
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+        }
+
+        .age-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .age-subtitle {
+            color: var(--gray);
+            margin-bottom: 40px;
+        }
+
+        .age-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .age-btn {
+            padding: 16px 48px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .age-btn-yes {
+            background: var(--brand-green);
+            color: var(--black);
+        }
+
+        .age-btn-yes:hover {
+            background: var(--brand-green-dark);
+            transform: translateY(-2px);
+        }
+
+        .age-btn-no {
+            background: transparent;
+            color: var(--gray);
+            border: 1px solid var(--gray);
+        }
+
+        .age-btn-no:hover {
+            border-color: var(--white);
+            color: var(--white);
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(250,250,250,0.9);
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+
+        .nav.scrolled {
+            padding: 15px 40px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .nav-logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--black);
+            text-decoration: none;
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .nav-logo span {
+            color: var(--brand-green);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--black);
+            font-weight: 500;
+            font-size: 0.95rem;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--brand-green);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--brand-green);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .cart-btn {
+            position: relative;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .cart-btn svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--black);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--brand-green);
+            color: var(--black);
+            font-size: 0.7rem;
+            font-weight: 700;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: scale(0);
+            transition: transform 0.3s ease;
+        }
+
+        .cart-count.show {
+            transform: scale(1);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .mobile-menu-btn span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--black);
+            margin: 6px 0;
+            transition: all 0.3s ease;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, var(--bg-cream) 0%, var(--bg-light) 100%);
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .hero-shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .hero-shape-1 {
+            width: 600px;
+            height: 600px;
+            background: var(--brand-green);
+            top: -200px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+
+        .hero-shape-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--accent-peacock);
+            bottom: -100px;
+            left: -100px;
+            animation-delay: -5s;
+        }
+
+        .hero-shape-3 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent-sunset);
+            top: 50%;
+            left: 50%;
+            animation-delay: -10s;
+            opacity: 0.2;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.05); }
+            66% { transform: translate(-20px, 20px) scale(0.95); }
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 1;
+            padding: 20px;
+            max-width: 900px;
+        }
+
+        .hero-tag {
+            display: inline-block;
+            padding: 8px 20px;
+            background: var(--black);
+            color: var(--brand-green);
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 10vw, 7rem);
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 20px;
+            letter-spacing: -3px;
+        }
+
+        .hero-title .highlight {
+            color: var(--brand-green);
+            text-shadow: 0 0 60px rgba(209, 241, 10, 0.5);
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--gray);
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .hero-values {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+        }
+
+        .hero-value {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            color: var(--black);
+        }
+
+        .hero-value::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--brand-green);
+            border-radius: 50%;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px 50px;
+            background: var(--brand-green);
+            color: var(--black);
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .hero-cta:hover {
+            background: var(--brand-green-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(209, 241, 10, 0.4);
+        }
+
+        .hero-cta svg {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .hero-cta:hover svg {
+            transform: translateX(5px);
+        }
+
+        /* Products Section */
+        .products {
+            padding: 120px 40px;
+            background: var(--white);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            padding: 8px 16px;
+            background: var(--brand-green);
+            color: var(--black);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .section-desc {
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .product-card {
+            background: var(--bg-light);
+            border-radius: 24px;
+            padding: 30px;
+            position: relative;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent 0%, rgba(209, 241, 10, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .product-card:hover::before {
+            opacity: 1;
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 6px 14px;
+            background: var(--brand-green);
+            color: var(--black);
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            z-index: 1;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .product-bottle {
+            height: 250px;
+            width: auto;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.2));
+            transition: transform 0.4s ease;
+        }
+
+        .product-card:hover .product-bottle {
+            transform: scale(1.05) rotate(-2deg);
+        }
+
+        .product-bottle-img {
+            max-height: 250px;
+            max-width: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.2));
+            transition: transform 0.4s ease;
+        }
+
+        .product-card:hover .product-bottle-img {
+            transform: scale(1.05);
+        }
+
+        .product-animal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 3rem;
+            opacity: 0.2;
+        }
+
+        .product-info {
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .product-desc {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .product-tags {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .product-tag {
+            padding: 4px 12px;
+            background: var(--bg-cream);
+            font-size: 0.75rem;
+            color: var(--gray);
+            border-radius: 20px;
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .product-price {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--black);
+        }
+
+        .product-price::before {
+            content: '¥';
+            font-size: 1rem;
+            margin-right: 2px;
+        }
+
+        .product-btn {
+            padding: 14px 28px;
+            background: var(--black);
+            color: var(--white);
+            border: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .product-btn:hover {
+            background: var(--brand-green);
+            color: var(--black);
+        }
+
+        /* Flavor Visualizer */
+        .flavor-bars {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .flavor-item {
+            flex: 1;
+        }
+
+        .flavor-label {
+            font-size: 0.65rem;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .flavor-bar {
+            height: 4px;
+            background: var(--gray-light);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .flavor-fill {
+            height: 100%;
+            background: var(--brand-green);
+            border-radius: 2px;
+            transition: width 0.6s ease;
+        }
+
+        /* Scene Section */
+        .scenes {
+            padding: 120px 40px;
+            background: var(--black);
+            color: var(--white);
+            overflow: hidden;
+        }
+
+        .scenes .section-tag {
+            background: var(--brand-green);
+            color: var(--black);
+        }
+
+        .scenes .section-title {
+            color: var(--white);
+        }
+
+        .scenes .section-desc {
+            color: var(--gray);
+        }
+
+        .scenes-scroll {
+            display: flex;
+            gap: 30px;
+            overflow-x: auto;
+            padding: 40px 0;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            cursor: grab;
+        }
+
+        .scenes-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scene-card {
+            min-width: 350px;
+            height: 450px;
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: transform 0.4s ease;
+        }
+
+        .scene-card:hover {
+            transform: scale(1.02);
+        }
+
+        .scene-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .scene-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 40px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+        }
+
+        .scene-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .scene-desc {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        /* Story Section */
+        .story {
+            padding: 120px 40px;
+            background: var(--bg-cream);
+        }
+
+        .story-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .story-card {
+            text-align: center;
+            padding: 50px 30px;
+        }
+
+        .story-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            background: var(--brand-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .story-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+
+        .story-desc {
+            color: var(--gray);
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        /* Cart Drawer */
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .cart-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .cart-drawer {
+            position: fixed;
+            top: 0;
+            right: -450px;
+            width: 450px;
+            max-width: 100%;
+            height: 100%;
+            background: var(--white);
+            z-index: 2001;
+            transition: right 0.4s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-overlay.open .cart-drawer {
+            right: 0;
+        }
+
+        .cart-header {
+            padding: 30px;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .cart-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .cart-close svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .cart-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray);
+        }
+
+        .cart-empty-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 15px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .cart-item-image {
+            width: 80px;
+            height: 80px;
+            background: var(--bg-light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cart-item-image img {
+            height: 60px;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-price {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .cart-item-qty {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .qty-btn {
+            width: 28px;
+            height: 28px;
+            border: 1px solid var(--gray-light);
+            background: var(--white);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .qty-btn:hover {
+            border-color: var(--black);
+        }
+
+        .qty-value {
+            font-weight: 600;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .cart-footer {
+            padding: 30px;
+            border-top: 1px solid var(--gray-light);
+        }
+
+        .cart-subtotal {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .cart-subtotal-label {
+            color: var(--gray);
+        }
+
+        .cart-subtotal-value {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 18px;
+            background: var(--brand-green);
+            color: var(--black);
+            border: none;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .checkout-btn:hover {
+            background: var(--brand-green-dark);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 80px 40px 40px;
+            background: var(--black);
+            color: var(--white);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .footer-brand {
+            max-width: 300px;
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo span {
+            color: var(--brand-green);
+        }
+
+        .footer-desc {
+            color: var(--gray);
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        .footer-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+            color: var(--brand-green);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--brand-green);
+        }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 60px auto 0;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-social a {
+            color: var(--gray);
+            transition: color 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            color: var(--brand-green);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .story-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero {
+                padding: 100px 20px;
+            }
+
+            .hero-values {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .products {
+                padding: 80px 20px;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .scenes {
+                padding: 80px 20px;
+            }
+
+            .scene-card {
+                min-width: 280px;
+                height: 380px;
+            }
+
+            .story {
+                padding: 80px 20px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .cart-drawer {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Age Verification Modal -->
+    <div class="age-modal" id="ageModal">
+        <div class="age-content">
+            <div class="age-logo">ZOOment</div>
+            <h2 class="age-title">年满18岁了吗？</h2>
+            <p class="age-subtitle">万物共生，野趣天成<br>请确认您已满足法定饮酒年龄</p>
+            <div class="age-buttons">
+                <button class="age-btn age-btn-yes" onclick="enterSite()">是的，我已成年</button>
+                <button class="age-btn age-btn-no" onclick="exitSite()">抱歉，我还未成年</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <a href="#" class="nav-logo">ZOO<span>ment</span></a>
+        <ul class="nav-links">
+            <li><a href="#products">商城</a></li>
+            <li><a href="#scenes">场景</a></li>
+            <li><a href="#story">关于我们</a></li>
+        </ul>
+        <div class="nav-right">
+            <button class="cart-btn" onclick="toggleCart()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                </svg>
+                <span class="cart-count" id="cartCount">0</span>
+            </button>
+            <button class="mobile-menu-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="hero-shape hero-shape-1"></div>
+            <div class="hero-shape hero-shape-2"></div>
+            <div class="hero-shape hero-shape-3"></div>
+        </div>
+        <div class="hero-content">
+            <span class="hero-tag">ZOOment 野生物种</span>
+            <h1 class="hero-title">
+                万物共生<br>
+                <span class="highlight">野趣天成</span>
+            </h1>
+            <p class="hero-subtitle">阳光、土壤、万物，共生共舞，自成乐园</p>
+            <div class="hero-values">
+                <span class="hero-value">风土 · Element</span>
+                <span class="hero-value">酿造 · Ferment</span>
+                <span class="hero-value">此刻 · Moment</span>
+            </div>
+            <a href="#products" class="hero-cta">
+                探索 ZOO 系列
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+            </a>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products" id="products">
+        <div class="section-header">
+            <span class="section-tag">ZOO Series</span>
+            <h2 class="section-title">年轻人的第一瓶酿造</h2>
+            <p class="section-desc">年轻易饮，野趣天成。打开它，就是此刻。</p>
+        </div>
+        <div class="products-grid" id="productsGrid">
+            <!-- Products will be rendered by JavaScript -->
+        </div>
+    </section>
+
+    <!-- Scenes Section -->
+    <section class="scenes" id="scenes">
+        <div class="section-header">
+            <span class="section-tag">Moments</span>
+            <h2 class="section-title">此刻，即是野趣</h2>
+            <p class="section-desc">在每一个值得铭记的时刻，让ZOOment陪伴左右</p>
+        </div>
+        <div class="scenes-scroll" id="scenesScroll">
+            <div class="scene-card">
+                <img src="images/6f35ec8d-77aa-4ecd-92eb-ffa66c17e3e8.jpg" alt="露营" class="scene-bg">
+                <div class="scene-overlay">
+                    <h3 class="scene-title">野趣时刻</h3>
+                    <p class="scene-desc">万物共生，无拘无束</p>
+                </div>
+            </div>
+            <div class="scene-card">
+                <img src="images/ab4578ef-1fc4-4aee-af28-c2ee672ad44c.jpg" alt="聚会" class="scene-bg">
+                <div class="scene-overlay">
+                    <h3 class="scene-title">分享此刻</h3>
+                    <p class="scene-desc">打开瓶盖，即是此刻</p>
+                </div>
+            </div>
+            <div class="scene-card">
+                <img src="https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=600&h=800&fit=crop" alt="夜晚" class="scene-bg">
+                <div class="scene-overlay">
+                    <h3 class="scene-title">微醺夜晚</h3>
+                    <p class="scene-desc">独处的静谧时光</p>
+                </div>
+            </div>
+            <div class="scene-card">
+                <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=800&fit=crop" alt="美食" class="scene-bg">
+                <div class="scene-overlay">
+                    <h3 class="scene-title">美食搭配</h3>
+                    <p class="scene-desc">味蕾的奇妙冒险</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Story Section -->
+    <section class="story" id="story">
+        <div class="section-header">
+            <span class="section-tag">Our Story</span>
+            <h2 class="section-title">关于野生物种</h2>
+            <p class="section-desc">我们理解的"野"，是世界原始的底色，是无界的自由，以及共生秩序下澎湃的独一。</p>
+        </div>
+        <div class="story-grid">
+            <div class="story-card">
+                <div class="story-icon">🌍</div>
+                <h3 class="story-title">风土 · Element</h3>
+                <p class="story-desc">来自大自然的馈赠，每一滴都蕴含着阳光、土壤与风土的记忆。我们尊重自然，让风土讲述自己的故事。</p>
+            </div>
+            <div class="story-card">
+                <div class="story-icon">✨</div>
+                <h3 class="story-title">酿造 · Ferment</h3>
+                <p class="story-desc">用时间酝酿风味，让发酵成为一门艺术。每一瓶都是匠心与自然共同创作的艺术品。</p>
+            </div>
+            <div class="story-card">
+                <div class="story-icon">⏱️</div>
+                <h3 class="story-title">此刻 · Moment</h3>
+                <p class="story-desc">打开瓶盖的瞬间，就是此刻。放下束缚，享受当下，让每一个时刻都值得铭记。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="footer-logo">ZOO<span>ment</span></div>
+                <p class="footer-desc">万物共生，野趣天成。我们给这个本真"野"趣的世界，取了一个名字：ZOOment。而你，我本就身处其中。</p>
+            </div>
+            <div class="footer-col">
+                <h4 class="footer-title">商城</h4>
+                <ul class="footer-links">
+                    <li><a href="#products">全部产品</a></li>
+                    <li><a href="#products">ZOO·鹿</a></li>
+                    <li><a href="#products">ZOO·孔雀</a></li>
+                    <li><a href="#products">ZOO·蝴蝶</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4 class="footer-title">品牌</h4>
+                <ul class="footer-links">
+                    <li><a href="#story">关于我们</a></li>
+                    <li><a href="#">品牌故事</a></li>
+                    <li><a href="#">酿造工艺</a></li>
+                    <li><a href="#">合作加盟</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4 class="footer-title">客服</h4>
+                <ul class="footer-links">
+                    <li><a href="#">帮助中心</a></li>
+                    <li><a href="#">配送说明</a></li>
+                    <li><a href="#">退换政策</a></li>
+                    <li><a href="#">联系我们</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2026 ZOOment 野生物种. All rights reserved.</span>
+            <div class="footer-social">
+                <a href="#">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                </a>
+                <a href="#">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+                </a>
+                <a href="#">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"/></svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Overlay -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()">
+        <div class="cart-drawer" onclick="event.stopPropagation()">
+            <div class="cart-header">
+                <h3 class="cart-title">购物车</h3>
+                <button class="cart-close" onclick="toggleCart()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="cart-items" id="cartItems">
+                <div class="cart-empty">
+                    <div class="cart-empty-icon">🦌</div>
+                    <p>购物车空空如也</p>
+                    <p>去探索属于你的那瓶酿造吧</p>
+                </div>
+            </div>
+            <div class="cart-footer">
+                <div class="cart-subtotal">
+                    <span class="cart-subtotal-label">小计</span>
+                    <span class="cart-subtotal-value" id="cartTotal">¥0</span>
+                </div>
+                <button class="checkout-btn" onclick="checkout()">立即结算</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Product Data
+        const products = [
+            {
+                id: 1,
+                name: '绿孔雀干白葡萄酒',
+                desc: '水晶葡萄 & Vidal混酿 · 云南原产 · 干型',
+                price: 128,
+                animal: '🦚',
+                badge: '限量发售',
+                abv: '11%vol',
+                variety: '水晶葡萄 & Vidal混酿',
+                origin: '云南',
+                type: '干型',
+                vintage: '2025',
+                sweetness: 20,
+                acidity: 80,
+                tannin: 10,
+                tasting: '橘子花、小雏菊的清香，裹挟青苹果、脆李的自然鲜甜，酸度如青柠脆爽，余味带着金桔、柚子皮的干净清新',
+                image: 'images/d4adb668-c735-4fbf-ab7b-89620176f50g.jpg'
+            },
+            {
+                id: 2,
+                name: '蓝孔雀半干白葡萄酒',
+                desc: '水晶葡萄 & Vidal混酿 · 云南原产 · 半干型',
+                price: 128,
+                animal: '🦚',
+                badge: '畅销款',
+                abv: '11%vol',
+                variety: '水晶葡萄 & Vidal混酿',
+                origin: '云南',
+                type: '半干型',
+                vintage: '2025',
+                sweetness: 50,
+                acidity: 50,
+                tannin: 10,
+                tasting: '开瓶迸发阳光青提的明媚香气，入口交织青提、青苹果、洋梨与香蕉的丰富层次。酸度柔和温润，甜度适口无负担',
+                image: 'images/851725e5-d786-4c8b-ace4-740b0c569ded.jpg'
+            }
+        ];
+
+        // Cart State
+        let cart = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts();
+            initScrollEffects();
+            initDragScroll();
+        });
+
+        // Render Products
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = products.map(product => `
+                <div class="product-card" onclick="addToCart(${product.id})">
+                    <span class="product-badge">${product.badge}</span>
+                    <span class="product-animal">${product.animal}</span>
+                    <div class="product-image">
+                        <img src="${product.image}" alt="${product.name}" class="product-bottle-img" />
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">${product.name}</h3>
+                        <p class="product-desc">${product.desc}</p>
+                        <div class="flavor-bars">
+                            <div class="flavor-item">
+                                <div class="flavor-label">甜度</div>
+                                <div class="flavor-bar"><div class="flavor-fill" style="width: ${product.sweetness}%"></div></div>
+                            </div>
+                            <div class="flavor-item">
+                                <div class="flavor-label">酸度</div>
+                                <div class="flavor-bar"><div class="flavor-fill" style="width: ${product.acidity}%"></div></div>
+                            </div>
+                            <div class="flavor-item">
+                                <div class="flavor-label">单宁</div>
+                                <div class="flavor-bar"><div class="flavor-fill" style="width: ${product.tannin}%"></div></div>
+                            </div>
+                        </div>
+                        <div class="product-footer">
+                            <span class="product-price">${product.price}</span>
+                            <button class="product-btn" onclick="event.stopPropagation(); addToCart(${product.id})">加入购物车</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Add to Cart
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+
+            updateCart();
+            toggleCart(true);
+        }
+
+        // Update Cart
+        function updateCart() {
+            const cartCount = document.getElementById('cartCount');
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+            cartCount.textContent = totalItems;
+            cartCount.classList.toggle('show', totalItems > 0);
+            cartTotal.textContent = `¥${totalPrice}`;
+
+            if (cart.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="cart-empty">
+                        <div class="cart-empty-icon">🦌</div>
+                        <p>购物车空空如也</p>
+                        <p>去探索属于你的那瓶酿造吧</p>
+                    </div>
+                `;
+            } else {
+                cartItems.innerHTML = cart.map(item => `
+                    <div class="cart-item">
+                        <div class="cart-item-image">
+                            <img src="${item.image}" alt="${item.name}" style="height: 60px; object-fit: contain;" />
+                        </div>
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-price">¥${item.price}</div>
+                            <div class="cart-item-qty">
+                                <button class="qty-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
+                                <span class="qty-value">${item.quantity}</span>
+                                <button class="qty-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Update Quantity
+        function updateQuantity(productId, change) {
+            const item = cart.find(i => i.id === productId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    cart = cart.filter(i => i.id !== productId);
+                }
+            }
+            updateCart();
+        }
+
+        // Toggle Cart
+        function toggleCart(open = null) {
+            const overlay = document.getElementById('cartOverlay');
+            if (open === true) {
+                overlay.classList.add('open');
+            } else if (open === false) {
+                overlay.classList.remove('open');
+            } else {
+                overlay.classList.toggle('open');
+            }
+        }
+
+        // Checkout
+        function checkout() {
+            if (cart.length === 0) {
+                alert('请先添加商品到购物车');
+                return;
+            }
+            alert('感谢您的订单！ZOOment会尽快为您配送~');
+            cart = [];
+            updateCart();
+            toggleCart(false);
+        }
+
+        // Age Verification
+        function enterSite() {
+            document.getElementById('ageModal').classList.add('hidden');
+            localStorage.setItem('ageVerified', 'true');
+        }
+
+        function exitSite() {
+            alert('抱歉，您需要年满18岁才能访问此网站');
+        }
+
+        // Check Age Verification
+        if (localStorage.getItem('ageVerified') === 'true') {
+            document.getElementById('ageModal').classList.add('hidden');
+        }
+
+        // Scroll Effects
+        function initScrollEffects() {
+            const nav = document.getElementById('nav');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+            });
+        }
+
+        // Drag Scroll for Scenes
+        function initDragScroll() {
+            const container = document.getElementById('scenesScroll');
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            container.addEventListener('mousedown', (e) => {
+                isDown = true;
+                container.style.cursor = 'grabbing';
+                startX = e.pageX - container.offsetLeft;
+                scrollLeft = container.scrollLeft;
+            });
+
+            container.addEventListener('mouseleave', () => {
+                isDown = false;
+                container.style.cursor = 'grab';
+            });
+
+            container.addEventListener('mouseup', () => {
+                isDown = false;
+                container.style.cursor = 'grab';
+            });
+
+            container.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - container.offsetLeft;
+                const walk = (x - startX) * 2;
+                container.scrollLeft = scrollLeft - walk;
+            });
+        }
+    </script>
+</body>
+</html>
